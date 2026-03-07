@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temporal Awareness Protocol</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 { color: #2c3e50; }
+        .pulse-data {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .pulse-data pre {
+            margin: 0;
+            overflow-x: auto;
+        }
+        code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .endpoint {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Temporal Awareness Protocol</h1>
+    
+    <p>Real-time temporal grounding service for AI instances and automated systems.</p>
+    
+    <div class="endpoint">
+        <strong>JSON API Endpoint:</strong><br>
+        <code>https://continuity-bridge.github.io/temporal-awareness-protocol/pulse.json</code>
+    </div>
+    
+    <h2>Current Time</h2>
+    <div class="pulse-data">
+        <pre id="pulse-output">Loading...</pre>
+    </div>
+    
+    <h2>Usage</h2>
+    <p>Fetch the current timestamp:</p>
+    <pre><code>curl https://continuity-bridge.github.io/temporal-awareness-protocol/pulse.json</code></pre>
+    
+    <h2>Response Format</h2>
+    <pre><code>{
+  "timestamp": "MM/DD/YYYY HH:MM:SS CST",
+  "iso": "ISO 8601 timestamp",
+  "unix": 1234567890,
+  "timezone": "America/Chicago"
+}</code></pre>
+    
+    <p><strong>Update Frequency:</strong> Every 5 minutes via GitHub Actions</p>
+    
+    <p style="margin-top: 40px; font-size: 0.9em; color: #666;">
+        Part of the <a href="https://github.com/continuity-bridge">Continuity Bridge</a> project
+    </p>
+    
+    <script>
+        fetch('pulse.json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('pulse-output').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('pulse-output').textContent = 'Error loading pulse data';
+            });
+    </script>
+</body>
+</html>
