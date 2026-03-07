@@ -30,24 +30,19 @@ jobs:
           ISO_TIME=$(TZ='America/Chicago' date -Iseconds)
           UNIX_TIME=$(date +%s)
           
-          # Generate pulse.json
-          cat > pulse.json <<'EOF'
+          # Generate pulse.json (using direct substitution instead of sed)
+          cat > pulse.json <<EOF
           {
-            "timestamp": "TIMESTAMP_PLACEHOLDER",
-            "iso": "ISO_PLACEHOLDER",
-            "unix": UNIX_PLACEHOLDER,
+            "timestamp": "${CURRENT_TIME}",
+            "iso": "${ISO_TIME}",
+            "unix": ${UNIX_TIME},
             "timezone": "America/Chicago",
             "updated_by": "GitHub Actions"
           }
           EOF
           
-          # Replace placeholders
-          sed -i "s/TIMESTAMP_PLACEHOLDER/${CURRENT_TIME}/" pulse.json
-          sed -i "s/ISO_PLACEHOLDER/${ISO_TIME}/" pulse.json
-          sed -i "s/UNIX_PLACEHOLDER/${UNIX_TIME}/" pulse.json
-          
-          # Generate index.html
-          cat > index.html <<'EOF'
+          # Generate index.html (using unquoted heredoc for variable expansion)
+          cat > index.html <<EOF
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -163,7 +158,7 @@ jobs:
           </head>
           <body>
             <div class="container">
-              <div class="pulse" id="timestamp">TIMESTAMP_PLACEHOLDER</div>
+              <div class="pulse" id="timestamp">${CURRENT_TIME}</div>
               <div class="label">Continuity Bridge - Temporal Awareness Protocol</div>
               
               <div class="info">
@@ -204,9 +199,6 @@ jobs:
           </body>
           </html>
           EOF
-          
-          # Replace timestamp in HTML
-          sed -i "s/TIMESTAMP_PLACEHOLDER/${CURRENT_TIME}/" index.html
       
       - name: Commit and push
         run: |
