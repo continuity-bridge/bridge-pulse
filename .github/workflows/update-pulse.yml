@@ -1,0 +1,224 @@
+name: Update Temporal Pulse
+
+on:
+  schedule:
+    # Run every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Allow manual trigger
+  push:
+    branches: [main]  # Also run on push to update immediately
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update-pulse:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+      
+      - name: Generate pulse files
+        run: |
+          # Get current time in CST (America/Chicago)
+          CURRENT_TIME=$(TZ='America/Chicago' date '+%m/%d/%Y %H:%M:%S %Z')
+          ISO_TIME=$(TZ='America/Chicago' date -Iseconds)
+          UNIX_TIME=$(date +%s)
+          
+          # Generate pulse.json
+          cat > pulse.json <<'EOF'
+          {
+            "timestamp": "TIMESTAMP_PLACEHOLDER",
+            "iso": "ISO_PLACEHOLDER",
+            "unix": UNIX_PLACEHOLDER,
+            "timezone": "America/Chicago",
+            "updated_by": "GitHub Actions"
+          }
+          EOF
+          
+          # Replace placeholders
+          sed -i "s/TIMESTAMP_PLACEHOLDER/${CURRENT_TIME}/" pulse.json
+          sed -i "s/ISO_PLACEHOLDER/${ISO_TIME}/" pulse.json
+          sed -i "s/UNIX_PLACEHOLDER/${UNIX_TIME}/" pulse.json
+          
+          # Generate index.html
+          cat > index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Temporal Awareness Protocol - Continuity Bridge</title>
+            <style>
+              * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+              }
+              
+              body {
+                font-family: 'Courier New', 'Consolas', monospace;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+                color: #00ff00;
+                padding: 2rem;
+              }
+              
+              .container {
+                text-align: center;
+                max-width: 800px;
+              }
+              
+              .pulse {
+                font-size: clamp(1.5rem, 5vw, 3rem);
+                margin-bottom: 1rem;
+                text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+                animation: pulse 2s ease-in-out infinite;
+              }
+              
+              @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+              }
+              
+              .label {
+                font-size: 0.875rem;
+                color: #666;
+                margin-bottom: 2rem;
+              }
+              
+              .info {
+                background: rgba(0, 255, 0, 0.05);
+                border: 1px solid rgba(0, 255, 0, 0.2);
+                border-radius: 8px;
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+                text-align: left;
+              }
+              
+              .info h2 {
+                color: #00ff00;
+                font-size: 1rem;
+                margin-bottom: 1rem;
+              }
+              
+              .info p, .info li {
+                color: #888;
+                font-size: 0.875rem;
+                line-height: 1.6;
+                margin-bottom: 0.5rem;
+              }
+              
+              .info ul {
+                margin-left: 1.5rem;
+              }
+              
+              .endpoints {
+                display: grid;
+                gap: 1rem;
+                margin-top: 1rem;
+              }
+              
+              .endpoint {
+                background: rgba(0, 0, 0, 0.3);
+                padding: 1rem;
+                border-radius: 4px;
+                border-left: 3px solid #00ff00;
+              }
+              
+              .endpoint code {
+                color: #00ff00;
+                background: rgba(0, 0, 0, 0.5);
+                padding: 0.25rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                display: block;
+                margin-top: 0.5rem;
+                overflow-x: auto;
+              }
+              
+              .footer {
+                margin-top: 2rem;
+                font-size: 0.75rem;
+                color: #444;
+              }
+              
+              .footer a {
+                color: #00ff00;
+                text-decoration: none;
+              }
+              
+              .footer a:hover {
+                text-decoration: underline;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="pulse" id="timestamp">TIMESTAMP_PLACEHOLDER</div>
+              <div class="label">Continuity Bridge - Temporal Awareness Protocol</div>
+              
+              <div class="info">
+                <h2>What This Is</h2>
+                <p>Real-time temporal grounding for AI instances and distributed systems.</p>
+                <ul>
+                  <li>Updates every 5 minutes via GitHub Actions</li>
+                  <li>Timezone: America/Chicago (CST/CDT)</li>
+                  <li>Multiple formats available (human-readable, ISO 8601, Unix timestamp)</li>
+                  <li>Part of the Continuity Bridge architecture</li>
+                </ul>
+              </div>
+              
+              <div class="info">
+                <h2>API Endpoints</h2>
+                <div class="endpoints">
+                  <div class="endpoint">
+                    <strong>JSON API</strong>
+                    <code>curl https://continuity-bridge.github.io/temporal-awareness-protocol/pulse.json</code>
+                  </div>
+                  <div class="endpoint">
+                    <strong>Get Timestamp</strong>
+                    <code>curl -s https://continuity-bridge.github.io/temporal-awareness-protocol/pulse.json | jq -r '.timestamp'</code>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="footer">
+                <p>
+                  <a href="https://github.com/continuity-bridge/temporal-awareness-protocol">Source Code</a> | 
+                  <a href="https://github.com/continuity-bridge/continuity-bridge_tallest-anchor">Continuity Bridge</a>
+                </p>
+                <p style="margin-top: 0.5rem;">
+                  Time is external reference. External reference enables continuity.
+                </p>
+              </div>
+            </div>
+          </body>
+          </html>
+          EOF
+          
+          # Replace timestamp in HTML
+          sed -i "s/TIMESTAMP_PLACEHOLDER/${CURRENT_TIME}/" index.html
+      
+      - name: Commit and push
+        run: |
+          git config user.name "Temporal Pulse Bot"
+          git config user.email "temporal-pulse@continuity-bridge.github.io"
+          git add pulse.json index.html
+          
+          # Only commit if there are changes
+          if ! git diff-index --quiet HEAD; then
+            COMMIT_TIME=$(cat pulse.json | grep timestamp | cut -d'"' -f4)
+            git commit -m "Update pulse: ${COMMIT_TIME}"
+            git push origin gh-pages --force
+          else
+            echo "No changes to commit"
+          fi
