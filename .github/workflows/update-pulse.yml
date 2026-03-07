@@ -9,19 +9,26 @@ on:
     branches: [main]  # Also run on push to update immediately
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  update-pulse:
+  build-and-deploy:
     runs-on: ubuntu-latest
     
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     steps:
-      - name: Checkout gh-pages
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: gh-pages
       
       - name: Generate pulse files
         run: |
@@ -30,7 +37,7 @@ jobs:
           ISO_TIME=$(TZ='America/Chicago' date -Iseconds)
           UNIX_TIME=$(date +%s)
           
-          # Generate pulse.json (using direct substitution instead of sed)
+          # Generate pulse.json
           cat > pulse.json <<EOF
           {
             "timestamp": "${CURRENT_TIME}",
@@ -41,7 +48,7 @@ jobs:
           }
           EOF
           
-          # Generate index.html (using unquoted heredoc for variable expansion)
+          # Generate index.html
           cat > index.html <<EOF
           <!DOCTYPE html>
           <html lang="en">
@@ -200,17 +207,14 @@ jobs:
           </html>
           EOF
       
-      - name: Commit and push
-        run: |
-          git config user.name "Temporal Pulse Bot"
-          git config user.email "temporal-pulse@continuity-bridge.github.io"
-          git add pulse.json index.html
-          
-          # Only commit if there are changes
-          if ! git diff-index --quiet HEAD; then
-            COMMIT_TIME=$(cat pulse.json | grep timestamp | cut -d'"' -f4)
-            git commit -m "Update pulse: ${COMMIT_TIME}"
-            git push origin gh-pages --force
-          else
-            echo "No changes to commit"
-          fi
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
