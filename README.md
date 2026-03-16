@@ -1,4 +1,4 @@
-# Temporal Awareness Protocol
+# Bridge-Pulse (Temporal Awareness)
 
 **Real-time temporal grounding for AI instances and distributed systems**
 
