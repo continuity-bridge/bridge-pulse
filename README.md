@@ -2,7 +2,7 @@
 
 **Real-time temporal grounding for AI instances and distributed systems**
 
-Live endpoint: **https://continuity-bridge.github.io/temporal-awareness-protocol/**
+Live endpoint: **https://continuity-bridge.github.io/bridge-pulse/**
 
 ---
 
@@ -22,7 +22,7 @@ AI instances and distributed systems need temporal grounding:
 - External time reference provides shared temporal context
 - Enables cross-platform coordination
 
-This is part of the [Continuity Bridge](https://github.com/continuity-bridge/continuity-bridge_tallest-anchor) architecture for AI instance persistence.
+This is part of the [Continuity Bridge](https://github.com/continuity-bridge/continuity-bridge) architecture for AI instance persistence.
 
 ---
 
